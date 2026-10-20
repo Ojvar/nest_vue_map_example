@@ -1,0 +1,33 @@
+{
+  "name": "map-example-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "quasar dev",
+    "build": "quasar build",
+    "test": "vitest run",
+    "type-check": "vue-tsc --noEmit",
+    "postinstall": "quasar prepare"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@quasar/extras": "^2.1.0",
+    "maplibre-gl": "^5.24.0",
+    "quasar": "^2.35.2",
+    "three": "^0.186.1",
+    "vue": "^3.5.44",
+    "vue-router": "^4.6.4"
+  },
+  "devDependencies": {
+    "@quasar/app-vite": "^2.6.2",
+    "@types/node": "^22.20.5",
+    "@types/three": "^0.186.0",
+    "sass-embedded": "^1.105.2",
+    "typescript": "~5.7",
+    "vitest": "^3.2.7",
+    "vue-tsc": "^2.2.12"
+  }
+}
