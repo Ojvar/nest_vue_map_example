@@ -15,6 +15,18 @@
       <q-tooltip>3D models appear from zoom {{ config.threeDMinZoom }}. Right-drag or Ctrl+drag to tilt.</q-tooltip>
     </q-btn>
 
+    <q-btn
+      class="locations-map__character-toggle"
+      :color="characterActive ? 'primary' : 'white'"
+      :text-color="characterActive ? 'white' : 'primary'"
+      icon="directions_walk"
+      dense
+      no-caps
+      @click="toggleCharacter"
+    >
+      <q-tooltip>Walk the roads with the arrow keys or WASD</q-tooltip>
+    </q-btn>
+
     <q-card class="locations-map__legend" flat bordered>
       <div v-for="item in legend" :key="item.type" class="row items-center no-wrap q-gutter-x-xs">
         <img :src="item.icon" width="16" height="16" alt="" />
@@ -32,6 +44,7 @@ import { config } from '../config';
 import { Billboard3DLayer } from '../map/billboard-3d-layer';
 import { applyPopupColor, buildPopupContent, POPUP_CLASS } from '../map/billboard-popup';
 import { BILLBOARD_TYPE_STYLES } from '../map/billboard-types';
+import { RoadCharacter } from '../map/road-character';
 import { addTypeIcons, iconDataUrl, iconName } from '../map/type-icons';
 import { BILLBOARD_TYPES, type Location } from '../services/locations-api';
 import type { Bounds } from '../services/map-data-cache';
@@ -57,6 +70,8 @@ const container = ref<HTMLDivElement>();
 const enable3d = ref(true);
 let map: MapLibreMap | null = null;
 let modelsLayer: Billboard3DLayer | null = null;
+const characterActive = ref(false);
+let character: RoadCharacter | null = null;
 /**
  * One popup instance, reused so only a single card is ever open.
  * closeOnClick is off: with a reused popup, MapLibre's built-in close would fire on the same
@@ -119,6 +134,17 @@ function toggle3d() {
     map.easeTo({ pitch: 0 });
   }
   updateRenderMode();
+}
+
+function toggleCharacter() {
+  if (character) {
+    character.stop();
+    character = null;
+  } else if (map?.isStyleLoaded()) {
+    character = new RoadCharacter(map);
+    character.start();
+  }
+  characterActive.value = character !== null;
 }
 
 function addLocationsLayers(m: MapLibreMap) {
@@ -192,6 +218,8 @@ onBeforeUnmount(() => {
   clearTimeout(debounceTimer);
   window.removeEventListener('keydown', closePopupOnEscape);
   popup.remove();
+  character?.stop();
+  character = null;
   map?.remove(); // removes the custom layer, which disposes three.js resources
   map = null;
   modelsLayer = null;
@@ -208,6 +236,12 @@ onBeforeUnmount(() => {
   position: absolute;
   top: 12px;
   right: 56px;
+  z-index: 2;
+}
+.locations-map__character-toggle {
+  position: absolute;
+  top: 12px;
+  right: 120px;
   z-index: 2;
 }
 .locations-map__legend {
