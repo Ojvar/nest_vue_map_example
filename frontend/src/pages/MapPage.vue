@@ -36,12 +36,14 @@ watch(error, (message) => {
 .map-page {
   position: relative;
 }
+
 .map-status {
   position: absolute;
   left: 12px;
   bottom: 24px;
   z-index: 1;
 }
+
 .map-error {
   position: absolute;
   top: 12px;
